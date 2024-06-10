@@ -1,0 +1,57 @@
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-header {
+  background-color: #222;
+  padding: 20px;
+  color: white;
+  text-align: center;
+}
+
+.hover-gray-out {
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.hover-gray-out:hover {
+  background-color: #f0f0f0;
+}
+
+.hover-gray-out:hover img {
+  transform: scale(1.005);
+}
+
+.App-footer {
+  background-color: #222;
+  padding: 10px;
+  color: white;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.App-content {
+  flex: 1;
+}
+
+/*Prelazi 100% zbog p-0*/
+.container-fluid {
+  overflow: hidden;
+}
