@@ -5,7 +5,7 @@ import Button from "react-bootstrap/Button";
 import { request } from "../axios_helper";
 import { useNavigate } from "react-router-dom";
 
-function ParticipentLogin() {
+function ParticipantLogin() {
   const navigate = useNavigate();
   const [showVisionDetails, setShowVisionDetails] = useState(false);
   const [selectedProblems, setSelectedProblems] = useState([]);
@@ -41,7 +41,7 @@ function ParticipentLogin() {
       impairmentTypes: selectedProblems,
       otherProblems,
     })
-      .then((response) => {
+      .then(() => {
         console.log("HAYA FRIEND :)");
         navigate("/home");
       })
@@ -169,4 +169,4 @@ function ParticipentLogin() {
   );
 }
 
-export default ParticipentLogin;
+export default ParticipantLogin;

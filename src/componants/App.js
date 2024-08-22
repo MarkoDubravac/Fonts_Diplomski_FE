@@ -1,12 +1,15 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {BrowserRouter as Router, Route, Routes, useParams} from "react-router-dom";
 import logo from "../logo.svg";
 import Header from "./Header";
 import Footer from "./Footer";
-import ParticipentLogin from "./ParticipentLogin";
 import ThreeCardsRow from "./ThreeCardsRow";
 import ReviewingCard from "./ReviewingCard";
 import BarChart from "./BarChart";
+import ParticipantLoginTest from "./ParticipentLoginTesting";
+import Home from "./Home";
+import AdminContent from "./admin/AdminContent";
+import {startSurveySession} from "../axios_helper";
 
 function App() {
   return (
@@ -23,19 +26,27 @@ function App() {
             <div className="col">
               <div>
                 <Routes>
-                  <Route path="/" exact Component={ParticipentLogin} />
-                  <Route path="/home" Component={ThreeCardsRow} />
-                  <Route path="/review" Component={ReviewingCard} />
-                  <Route path="/graphs" Component={BarChart} />
+                  <Route path="/" exact element={<Home />} />
+                  <Route path="/admin" exact element={<AdminContent />} />
+                  <Route path="/:uuid" exact element={<ParticipantLoginTestingWrapper />} />
+                  <Route path="/:uuid/home" element={<ThreeCardsRow />} />
+                  <Route path="/:uuid/review" element={<ReviewingCard />} />
+                  <Route path="/:uuid/graphs" element={<BarChart />} />
                 </Routes>
               </div>
             </div>
           </div>
         </div>
-        <Footer></Footer>
+        <Footer />
       </Router>
     </div>
   );
+}
+
+function ParticipantLoginTestingWrapper() {
+  const { uuid } = useParams();
+  startSurveySession();
+  return <ParticipantLoginTest surveyId={uuid} />;
 }
 
 export default App;

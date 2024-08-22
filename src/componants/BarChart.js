@@ -112,10 +112,8 @@ function BarChart() {
 
   return (
     <Container>
-      <Row className="mb-3 justify-content-center">
-        <Col xs={12} className="text-center mb-3">
-          <h2>Grafovi</h2>
-        </Col>
+      <Row className="mb-3 mt-3 justify-content-center">
+          <h2>Tvoji Grafovi</h2>
       </Row>
       <Row className="mb-3 justify-content-center">
         <Col xs={12} sm={12} md={12} lg={6} className="mb-3">

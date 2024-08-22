@@ -2,20 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import StarRating from "./StarRating";
-import { request } from "../axios_helper";
+import {getSurveySessionToken, request} from "../axios_helper";
 import Form from "react-bootstrap/Form";
 import Alert from "react-bootstrap/Alert";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import { useNavigate } from "react-router-dom";
-
-const fonts = [
-  "Arial",
-  "Verdana",
-  "Times New Roman",
-  "Georgia",
-  "Courier New",
-  "Comic Sans MS",
-];
+import {useNavigate, useParams} from "react-router-dom";
 
 function ReviewingCard() {
   const navigate = useNavigate();
@@ -26,11 +17,13 @@ function ReviewingCard() {
   const [page, setPage] = useState(1);
   const [currentPageText, setCurrentPageText] = useState("");
   const [count, setCount] = useState(0);
-  const [currentFont, setCurrentFont] = useState(fonts[0]);
+  const [fonts, setFonts] = useState([]);
+  const [currentFont, setCurrentFont] = useState();
+  const { uuid } = useParams();
 
   useEffect(() => {
     console.log("Fetching total count of texts!");
-    request("GET", "/count")
+    request("GET", `/count?uuid=${uuid}`)
       .then((response) => {
         setCount(response.data);
       })
@@ -40,7 +33,20 @@ function ReviewingCard() {
   }, []);
 
   useEffect(() => {
-    request("GET", "/review?id=" + page)
+    console.log("Fetching fonts!");
+    request("GET", `/fonts?uuid=${uuid}`)
+        .then((response) => {
+          console.log(response.data);
+          setFonts(response.data);
+          setCurrentFont(response.data[0]);
+        })
+        .catch((error) => {
+          console.error("Error fetching count:", error);
+        });
+  }, []);
+
+  useEffect(() => {
+    request("GET", `/review?id=${page}`)
       .then((response) => {
         setCurrentPageText(response.data);
         setRating(0);
@@ -76,15 +82,17 @@ function ReviewingCard() {
       duration: timer,
       font: currentFont,
       rating,
+      surveySession: getSurveySessionToken()
     })
-      .then((response) => {
+      .then(() => {
+        console.log(getSurveySessionToken());
         console.log("Review submitted successfully: ", rating);
         setPage((prevPage) => prevPage + 1);
         setShowNewText(false);
         setTimer(0);
         setIsRunning(true);
         setCurrentFont(fonts[page]);
-        if (page === count) navigate("/graphs");
+        if (page === count) navigate(`/${uuid}/graphs`);
       })
       .catch((error) => {
         console.error("Error submitting review:", error);

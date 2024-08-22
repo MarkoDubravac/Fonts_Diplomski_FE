@@ -2,10 +2,13 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import BarChart from "../bar-chart-md.png";
-import { Link } from "react-router-dom";
+import infoImage from "../info.svg";
+import reviewImage from "../review.svg";
+import graphsImage from "../graphs.svg";
+import {Link, useParams} from "react-router-dom";
 
 function ThreeCardsRow() {
+  const { uuid } = useParams();
   return (
     <Row className="gy-3 p-3">
       <Col xs={12} sm={6} md={4}>
@@ -18,13 +21,13 @@ function ThreeCardsRow() {
               Ukratko objašnjen način provođenja recenziranja fontova.
             </Card.Text>
             <div className="d-flex justify-content-center mt-auto">
-              <Card.Img className="w-50" src={BarChart} alt="logo" />
+              <Card.Img className="w-50" src={infoImage} alt="logo" />
             </div>
           </Card.Body>
         </Card>
       </Col>
       <Col xs={12} sm={6} md={4}>
-        <Link to="/review" style={{ textDecoration: "none" }}>
+        <Link to={`/${uuid}/review`} style={{ textDecoration: "none" }}>
           <Card className="hover-gray-out h-100">
             <Card.Body className="d-flex flex-column">
               <Card.Title className="mb-3">Recenziraj fontove</Card.Title>
@@ -33,14 +36,14 @@ function ThreeCardsRow() {
                 provedeno čitajući. Postoji pauza između svakog paragrafa.
               </Card.Text>
               <div className="d-flex justify-content-center mt-auto">
-                <img className="w-50" src={BarChart} alt="logo" />
+                <img className="w-50" src={reviewImage} alt="logo" />
               </div>
             </Card.Body>
           </Card>
         </Link>
       </Col>
       <Col xs={12} sm={6} md={4}>
-        <Link to="/graphs" style={{ textDecoration: "none" }}>
+        <Link to={`/${uuid}/graphs`} style={{ textDecoration: "none" }}>
           <Card className="hover-gray-out h-100" type="submit">
             <Card.Body className="d-flex flex-column">
               <Card.Title className="mb-3">Grafovi</Card.Title>
@@ -48,7 +51,7 @@ function ThreeCardsRow() {
                 Grafovi koji pokazuju vaše i ukupne (trenutne) rezultate.
               </Card.Text>
               <div className="d-flex justify-content-center mt-auto">
-                <img className="w-50" src={BarChart} alt="logo" />
+                <img className="w-50" src={graphsImage} alt="logo" />
               </div>
             </Card.Body>
           </Card>

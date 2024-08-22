@@ -1,93 +1,71 @@
-import * as React from "react";
+import React, { useState } from "react";
 import classNames from "classnames";
 
-export default class LoginForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      active: "login",
-      firstName: "",
-      lastName: "",
-      login: "",
-      password: "",
-      // login i register funkcije exportane parent komponenti
-      // kako bi parent komponenta hidala ovu komponentu nakon logina
-      onLogin: props.onLogin,
-      onRegister: props.onRegister,
-    };
-  }
+export default function LoginForm({ onLogin, onRegister }) {
+  const [active, setActive] = useState("login");
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    login: "",
+    password: "",
+  });
 
-  onChangeHandler = (event) => {
-    let name = event.target.name;
-    let value = event.target.value;
-    this.setState({ [name]: value });
+  const onChangeHandler = (event) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  onSubmitLogin = (e) => {
-    this.state.onLogin(e, this.state.login, this.state.password);
+  const onSubmitLogin = (e) => {
+    e.preventDefault();
+    if (typeof onLogin === 'function') {
+      onLogin(e, formData.login, formData.password);
+    } else {
+      console.error('onLogin is not a function');
+    }
   };
 
-  onSubmitRegister = (e) => {
-    this.state.onRegister(
-      e,
-      this.state.firstName,
-      this.state.lastName,
-      this.state.login,
-      this.state.password
-    );
+  const onSubmitRegister = (e) => {
+    e.preventDefault();
+    if (typeof onRegister === 'function') {
+      onRegister(e, formData.firstName, formData.lastName, formData.login, formData.password);
+    } else {
+      console.error('onRegister is not a function');
+    }
   };
 
-  render() {
-    return (
-      <div className="row justify-content-center">
+  return (
+      <div className="row justify-content-center mt-5">
         <div className="col-4">
-          <ul
-            className="nav nav-pills nav-justified mb-3"
-            id="ex1"
-            role="tablist"
-          >
+          <ul className="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
             <li className="nav-item" role="presentation">
               <button
-                className={classNames(
-                  "nav-link",
-                  this.state.active === "login" ? "active" : ""
-                )}
-                id="tab-login"
-                onClick={() => this.setState({ active: "login" })}
+                  className={classNames("nav-link", active === "login" ? "active" : "")}
+                  id="tab-login"
+                  onClick={() => setActive("login")}
               >
                 Login
               </button>
             </li>
             <li className="nav-item" role="presentation">
               <button
-                className={classNames(
-                  "nav-link",
-                  this.state.active === "register" ? "active" : ""
-                )}
-                id="tab-register"
-                onClick={() => this.setState({ active: "register" })}
+                  className={classNames("nav-link", active === "register" ? "active" : "")}
+                  id="tab-register"
+                  onClick={() => setActive("register")}
               >
                 Register
               </button>
             </li>
           </ul>
           <div className="tab-content">
-            <div
-              className={classNames(
-                "tab-pane",
-                "fade",
-                this.state.active === "login" ? "show active" : ""
-              )}
-              id="pill-login"
-            >
-              <form onSubmit={this.onSubmitLogin}>
+            <div className={classNames("tab-pane", "fade", active === "login" ? "show active" : "")} id="pill-login">
+              <form onSubmit={onSubmitLogin}>
                 <div className="form-outline mb-4">
                   <input
-                    type="login"
-                    id="loginName"
-                    name="login"
-                    className="form-control"
-                    onChange={this.onChangeHandler}
+                      type="text"
+                      id="loginName"
+                      name="login"
+                      className="form-control"
+                      onChange={onChangeHandler}
                   />
                   <label className="form-label" htmlFor="loginName">
                     Username
@@ -96,42 +74,32 @@ export default class LoginForm extends React.Component {
 
                 <div className="form-outline mb-4">
                   <input
-                    type="password"
-                    id="loginPassword"
-                    name="password"
-                    className="form-control"
-                    onChange={this.onChangeHandler}
+                      type="password"
+                      id="loginPassword"
+                      name="password"
+                      className="form-control"
+                      onChange={onChangeHandler}
                   />
                   <label className="form-label" htmlFor="loginPassword">
                     Password
                   </label>
                 </div>
 
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-block mb-4"
-                >
+                <button type="submit" className="btn btn-primary btn-block mb-4">
                   Sign In
                 </button>
               </form>
             </div>
 
-            <div
-              className={classNames(
-                "tab-pane",
-                "fade",
-                this.state.active === "register" ? "show active" : ""
-              )}
-              id="pills-register"
-            >
-              <form onSubmit={this.onSubmitRegister}>
+            <div className={classNames("tab-pane", "fade", active === "register" ? "show active" : "")} id="pills-register">
+              <form onSubmit={onSubmitRegister}>
                 <div className="form-outline mb-4">
                   <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    className="form-control"
-                    onChange={this.onChangeHandler}
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      className="form-control"
+                      onChange={onChangeHandler}
                   />
                   <label className="form-label" htmlFor="firstName">
                     First Name
@@ -140,11 +108,11 @@ export default class LoginForm extends React.Component {
 
                 <div className="form-outline mb-4">
                   <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    className="form-control"
-                    onChange={this.onChangeHandler}
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      className="form-control"
+                      onChange={onChangeHandler}
                   />
                   <label className="form-label" htmlFor="lastName">
                     Last Name
@@ -153,11 +121,11 @@ export default class LoginForm extends React.Component {
 
                 <div className="form-outline mb-4">
                   <input
-                    type="text"
-                    id="login"
-                    name="login"
-                    className="form-control"
-                    onChange={this.onChangeHandler}
+                      type="text"
+                      id="login"
+                      name="login"
+                      className="form-control"
+                      onChange={onChangeHandler}
                   />
                   <label className="form-label" htmlFor="login">
                     Username
@@ -166,28 +134,24 @@ export default class LoginForm extends React.Component {
 
                 <div className="form-outline mb-4">
                   <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    className="form-control"
-                    onChange={this.onChangeHandler}
+                      type="password"
+                      id="password"
+                      name="password"
+                      className="form-control"
+                      onChange={onChangeHandler}
                   />
                   <label className="form-label" htmlFor="password">
                     Password
                   </label>
                 </div>
 
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-block mb-4"
-                >
-                  Sign In
+                <button type="submit" className="btn btn-primary btn-block mb-4">
+                  Register
                 </button>
               </form>
             </div>
           </div>
         </div>
       </div>
-    );
-  }
+  );
 }
