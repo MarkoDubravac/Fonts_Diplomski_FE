@@ -7,6 +7,7 @@ import { request, setAuthToken } from '../../axios_helper';
 import AdminNavLinks from './AdminNavLinks';
 import AllAdminSurveys from "./AllAdminSurveys";
 import NewAdminText from "./NewAdminText";
+import AdminStats from "./AdminStats";
 
 export default function AdminContent() {
     const [adminPermissions, setAdminPermissions] = useState(false);
@@ -28,7 +29,6 @@ export default function AdminContent() {
 
     const onLogin = (e, username, password) => {
         e.preventDefault();
-        console.log('onLogin called with:', username, password);
         request('POST', '/login', { login: username, password: password })
             .then((response) => {
                 setAdminPermissions(true);
@@ -42,7 +42,6 @@ export default function AdminContent() {
 
     const onRegister = (e, firstName, lastName, username, password) => {
         e.preventDefault();
-        console.log('onRegister called with:', firstName, lastName, username, password);
         request('POST', '/register', {
             firstName: firstName,
             lastName: lastName,
@@ -60,7 +59,6 @@ export default function AdminContent() {
     };
 
     const handleNavSelect = (eventKey) => {
-        console.log("Component to show is:", eventKey);
         setComponentToShow(eventKey);
     };
 
@@ -74,7 +72,7 @@ export default function AdminContent() {
                 {adminPermissions && componentToShow === 'surveys' && <AllAdminSurveys />}
                 {adminPermissions && componentToShow === 'newSurveys' && <NewAdminSurvey />}
                 {adminPermissions && componentToShow === 'newTexts' && <NewAdminText />}
-                {adminPermissions && componentToShow === 'adminStats' && <div>Admin Stats Content</div>}
+                {adminPermissions && componentToShow === 'adminStats' && <AdminStats />}
             </Card>
             {adminPermissions && <Buttons logout={logout} />}
         </div>

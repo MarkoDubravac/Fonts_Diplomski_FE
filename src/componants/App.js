@@ -5,11 +5,13 @@ import Header from "./Header";
 import Footer from "./Footer";
 import ThreeCardsRow from "./ThreeCardsRow";
 import ReviewingCard from "./ReviewingCard";
-import BarChart from "./BarChart";
+import ParticipantsStats from "./ParticipantsStats";
 import ParticipantLoginTest from "./ParticipentLoginTesting";
 import Home from "./Home";
 import AdminContent from "./admin/AdminContent";
 import {startSurveySession} from "../axios_helper";
+import AllStats from "./AllStats";
+import HowTo from "./HowTo";
 
 function App() {
   return (
@@ -29,9 +31,11 @@ function App() {
                   <Route path="/" exact element={<Home />} />
                   <Route path="/admin" exact element={<AdminContent />} />
                   <Route path="/:uuid" exact element={<ParticipantLoginTestingWrapper />} />
-                  <Route path="/:uuid/home" element={<ThreeCardsRow />} />
-                  <Route path="/:uuid/review" element={<ReviewingCard />} />
-                  <Route path="/:uuid/graphs" element={<BarChart />} />
+                  <Route path="/:uuid/home" exact element={<ThreeCardsRow />} />
+                  <Route path="/:uuid/how-to" exact element={<HowTo />} />
+                  <Route path="/:uuid/review" exact element={<ReviewingCard />} />
+                  <Route path="/:uuid/graphs" exact element={<ParticipantsStats />} />
+                  <Route path="/:uuid/graphs/all" exact element={<AllStats />} />
                 </Routes>
               </div>
             </div>

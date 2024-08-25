@@ -12,6 +12,7 @@ function ThreeCardsRow() {
   return (
     <Row className="gy-3 p-3">
       <Col xs={12} sm={6} md={4}>
+        <Link to={`/${uuid}/how-to`} style={{ textDecoration: "none" }}>
         <Card className="hover-gray-out h-100">
           <Card.Body className="d-flex flex-column">
             <Card.Title className="mb-3">
@@ -21,10 +22,11 @@ function ThreeCardsRow() {
               Ukratko objašnjen način provođenja recenziranja fontova.
             </Card.Text>
             <div className="d-flex justify-content-center mt-auto">
-              <Card.Img className="w-50" src={infoImage} alt="logo" />
+              <Card.Img className="w-50" src={infoImage} loading="lazy" alt="logo" />
             </div>
           </Card.Body>
         </Card>
+        </Link>
       </Col>
       <Col xs={12} sm={6} md={4}>
         <Link to={`/${uuid}/review`} style={{ textDecoration: "none" }}>
@@ -36,7 +38,7 @@ function ThreeCardsRow() {
                 provedeno čitajući. Postoji pauza između svakog paragrafa.
               </Card.Text>
               <div className="d-flex justify-content-center mt-auto">
-                <img className="w-50" src={reviewImage} alt="logo" />
+                <img className="w-50" src={reviewImage} loading="lazy" alt="logo" />
               </div>
             </Card.Body>
           </Card>
@@ -51,7 +53,7 @@ function ThreeCardsRow() {
                 Grafovi koji pokazuju vaše i ukupne (trenutne) rezultate.
               </Card.Text>
               <div className="d-flex justify-content-center mt-auto">
-                <img className="w-50" src={graphsImage} alt="logo" />
+                <img className="w-50" src={graphsImage} loading="lazy" alt="logo" />
               </div>
             </Card.Body>
           </Card>

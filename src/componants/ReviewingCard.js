@@ -1,147 +1,160 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+import React, {useState, useEffect} from "react";
+import {Button} from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import StarRating from "./StarRating";
 import {getSurveySessionToken, request} from "../axios_helper";
 import Form from "react-bootstrap/Form";
-import Alert from "react-bootstrap/Alert";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import {useNavigate, useParams} from "react-router-dom";
+import info_fill from "../info_fill.svg"
 
 function ReviewingCard() {
-  const navigate = useNavigate();
-  const [timer, setTimer] = useState(0);
-  const [isRunning, setIsRunning] = useState(true);
-  const [showNewText, setShowNewText] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [page, setPage] = useState(1);
-  const [currentPageText, setCurrentPageText] = useState("");
-  const [count, setCount] = useState(0);
-  const [fonts, setFonts] = useState([]);
-  const [currentFont, setCurrentFont] = useState();
-  const { uuid } = useParams();
+    const navigate = useNavigate();
+    const [timer, setTimer] = useState(0);
+    const [isRunning, setIsRunning] = useState(false); // Timer is not running initially
+    const [showNewText, setShowNewText] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [page, setPage] = useState(1);
+    const [currentPageText, setCurrentPageText] = useState("");
+    const [count, setCount] = useState(0);
+    const [fonts, setFonts] = useState([]);
+    const [currentFont, setCurrentFont] = useState();
+    const {uuid} = useParams();
 
-  useEffect(() => {
-    console.log("Fetching total count of texts!");
-    request("GET", `/count?uuid=${uuid}`)
-      .then((response) => {
-        setCount(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching count:", error);
-      });
-  }, []);
+    useEffect(() => {
+        request("GET", `/count?uuid=${uuid}`)
+            .then((response) => {
+                setCount(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching count:", error);
+            });
+    }, []);
 
-  useEffect(() => {
-    console.log("Fetching fonts!");
-    request("GET", `/fonts?uuid=${uuid}`)
-        .then((response) => {
-          console.log(response.data);
-          setFonts(response.data);
-          setCurrentFont(response.data[0]);
-        })
-        .catch((error) => {
-          console.error("Error fetching count:", error);
-        });
-  }, []);
+    useEffect(() => {
+        request("GET", `/fonts?uuid=${uuid}`)
+            .then((response) => {
+                setFonts(response.data);
+                setCurrentFont(response.data[0]);
+            })
+            .catch((error) => {
+                console.error("Error fetching fonts:", error);
+            });
+    }, []);
 
-  useEffect(() => {
-    request("GET", `/review?id=${page}`)
-      .then((response) => {
-        setCurrentPageText(response.data);
-        setRating(0);
-      })
-      .catch((error) => {
-        console.error("Error sending initial review request:", error);
-      });
-  }, [page]);
+    useEffect(() => {
+        request("GET", `/review?id=${page}&uuid=${uuid}`)
+            .then((response) => {
+                setCurrentPageText(response.data);
+                setRating(0);
+            })
+            .catch((error) => {
+                console.error("Error sending initial review request:", error);
+            });
 
-  useEffect(() => {
-    let interval;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer + 1);
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
+        if (page > 1) {
+            setIsRunning(true); // Start the timer automatically after the first page
+        }
+    }, [page]);
 
-    return () => clearInterval(interval);
-  }, [isRunning]);
+    useEffect(() => {
+        let interval;
+        if (isRunning) {
+            interval = setInterval(() => {
+                setTimer((prevTimer) => prevTimer + 1);
+            }, 1000);
+        } else {
+            clearInterval(interval);
+        }
 
-  const handleStop = () => {
-    setIsRunning(false);
-    setShowNewText(true);
-    console.log("Time passed:", timer, "seconds");
-  };
+        return () => clearInterval(interval);
+    }, [isRunning]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    request("POST", "/submit", {
-      duration: timer,
-      font: currentFont,
-      rating,
-      surveySession: getSurveySessionToken()
-    })
-      .then(() => {
-        console.log(getSurveySessionToken());
-        console.log("Review submitted successfully: ", rating);
-        setPage((prevPage) => prevPage + 1);
-        setShowNewText(false);
-        setTimer(0);
+    const handleStart = () => {
         setIsRunning(true);
-        setCurrentFont(fonts[page]);
-        if (page === count) navigate(`/${uuid}/graphs`);
-      })
-      .catch((error) => {
-        console.error("Error submitting review:", error);
-      });
-  };
+        setShowNewText(false);
+    };
 
-  return (
-    <div className="row mb-3">
-      <div className="container d-grid" style={{ placeItems: "center" }}>
-        {showNewText ? (
-          <Alert className="w-100 rounded-0 font-weight-bold" variant="primary">
-            Timer će se pokrenuti pritiskom na next!
-          </Alert>
-        ) : (
-          <div></div>
-        )}
-        <Card className={"col-sm-6 mb-3 mt-3 text-justify"}>
-          <Card.Body>
-            <div style={{ fontFamily: currentFont }}>{currentPageText}</div>
-          </Card.Body>
-        </Card>
-        {showNewText ? (
-          <div>
-            <div className="mb-3">
-              Kako biste ocjenili čitljivost <b>FONTA*</b> pročitanog teksta?
+    const handleStop = () => {
+        setIsRunning(false);
+        setShowNewText(true);
+        console.log("Time passed:", timer, "seconds");
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        request("POST", "/submit", {
+            duration: timer,
+            font: currentFont,
+            rating,
+            surveySession: getSurveySessionToken(),
+        })
+            .then(() => {
+                setPage((prevPage) => prevPage + 1);
+                setShowNewText(false);
+                setTimer(0);
+                setCurrentFont(fonts[page]);
+                if (page === count) navigate(`/${uuid}/graphs`);
+            })
+            .catch((error) => {
+                console.error("Error submitting review:", error);
+            });
+    };
+
+    return (
+        <div className="row mb-3">
+            <div className="container d-grid" style={{placeItems: "center"}}>
+                {page === 1 && !isRunning && timer === 0 && (
+                    <Card className={"mb-3 mt-3 m-5"}>
+                        <div className="d-flex justify-content-center mt-auto">
+                            <Card.Img variant="top" className={"w-50"} src={info_fill}/>
+                        </div>
+                        <Card.Text className={"m-2"}>Molim vas pažljivo pročitajte nadolazeće tekstove.</Card.Text>
+                        <Card.Text className={"m-2"}>Uključen je brojač za vrijeme čitanja.</Card.Text>
+                        <Card.Text className={"m-2"}>Nakon što završite s čitanje pritisnite gumb zaustavi.</Card.Text>
+                        <Button onClick={handleStart}>
+                            Kreni
+                        </Button>
+                    </Card>
+                )}
+                {(isRunning || page > 1 || (page === 1 && timer !== 0)) && (
+                <Card className={"col-sm-6 mb-3 mt-3 text-justify"}>
+                    <Card.Body>
+                        <div style={{fontFamily: currentFont}}>{currentPageText}</div>
+                    </Card.Body>
+                </Card>
+                )}
+                {showNewText ? (
+                    <div>
+                        <div className="mb-3">
+                            Kako biste ocjenili čitljivost <b>FONTA*</b> pročitanog teksta?
+                        </div>
+                        <StarRating rating={rating} setRating={setRating}/>
+                    </div>
+                ) : (
+                    (isRunning || page > 1) && (
+                        <Button className="mb-3" onClick={handleStop}>
+                            Stani
+                        </Button>
+                    )
+                )}
+                {showNewText ? (
+                    <Form onSubmit={handleSubmit} className="mb-3">
+                        <Button disabled={rating === 0} type="submit">Sljedeći</Button>
+                    </Form>
+                ) : (
+                    <div></div>
+                )}
+                <div className="mt-4 d-block col-12 col-sm-6">
+                    <div className="text-justify">
+                        {page}/{count}
+                    </div>
+                    <ProgressBar min={1} max={count + 1} now={page} animated/>
+                </div>
             </div>
-            <StarRating rating={rating} setRating={setRating} />
-          </div>
-        ) : (
-          <Button className="mb-3" onClick={handleStop}>
-            Stop
-          </Button>
-        )}
-        {showNewText ? (
-          <Form onSubmit={handleSubmit} className="mb-3">
-            <Button type="submit">Next</Button>
-          </Form>
-        ) : (
-          <div></div>
-        )}
-        <div className="mt-4 d-block col-12 col-sm-6">
-          <div className="text-justify">
-            {page}/{count}
-          </div>
-          <ProgressBar min={1} max={count + 1} now={page} animated />
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default ReviewingCard;

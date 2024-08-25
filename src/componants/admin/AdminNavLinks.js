@@ -6,22 +6,22 @@ export default function AdminNavLinks({ onSelect }) {
         <Nav fill variant="tabs" defaultActiveKey="/" onSelect={onSelect}>
             <Nav.Item>
                 <Nav.Link eventKey="surveys">
-                    Surveys
+                    Ankete i Kolekcije
                 </Nav.Link>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link eventKey="newSurveys">
-                    New Survey
+                    Nova Anketa
                 </Nav.Link>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link eventKey="newTexts">
-                    New Texts
+                    Nova Kolekcija i Tekst
                 </Nav.Link>
             </Nav.Item>
             <Nav.Item>
                 <Nav.Link eventKey="adminStats">
-                    Stats
+                    Korisnikova Statistika
                 </Nav.Link>
             </Nav.Item>
         </Nav>

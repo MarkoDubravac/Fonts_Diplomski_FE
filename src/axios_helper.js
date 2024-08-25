@@ -27,9 +27,6 @@ export const request = (method, url, data) => {
     headers["Survey-Session"] = surveySessionToken;
   }
 
-  console.log("Making request to:", url);
-  console.log("Headers:", headers);
-  console.log("Data:", data);
   return axios({
     method: method,
     headers: headers,
@@ -44,7 +41,7 @@ axios.interceptors.response.use(
     },
     (error) => {
       if (error.response) {
-        console.log('Full Error Response:', error.response);  // Log the full response
+        console.error('Full Error Response:', error.response);
 
         const status = error.response.status;
 

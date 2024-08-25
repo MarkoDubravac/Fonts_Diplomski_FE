@@ -17,9 +17,7 @@ const ParticipantLoginTest = ({ surveyId }) => {
     useEffect(() => {
         const fetchSurvey = async () => {
             try {
-                console.log("Fetching survey data!");
                 const response = await request("GET", `/${surveyId}`);
-                console.log(response.data);
                 setSurvey(response.data);
             } catch (error) {
                 console.error("Error fetching survey:", error);
@@ -47,7 +45,6 @@ const ParticipantLoginTest = ({ surveyId }) => {
         e.preventDefault();
         const newWarnings = {};
 
-        // Check for missing required fields
         survey.questions.forEach((question) => {
             if (!question.optional && !responses[question.id]) {
                 newWarnings[question.id] = true;
@@ -56,14 +53,15 @@ const ParticipantLoginTest = ({ surveyId }) => {
 
         setWarnings(newWarnings);
 
-        // If there are warnings, don't proceed with submission
         if (Object.keys(newWarnings).length > 0) {
             return;
         }
 
         const answers = Object.keys(responses).map((questionId) => ({
             questionId: parseInt(questionId),
-            responseText: responses[questionId],
+            responseText: Array.isArray(responses[questionId])
+                ? JSON.stringify(responses[questionId])
+                : responses[questionId],
         }));
 
         const surveyResponseDTO = {
