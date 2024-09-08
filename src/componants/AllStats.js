@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
-import {getSurveySessionToken, request} from "../axios_helper";
+import {request} from "../axios_helper";
 import {Bar} from "react-chartjs-2";
-import {Card, Button} from "react-bootstrap";
+import {Card} from "react-bootstrap";
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,7 +12,8 @@ import {
     Legend,
 } from "chart.js";
 import {Container, Row, Col} from "react-bootstrap";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import {BsArrowLeftCircle} from "react-icons/bs";
 
 ChartJS.register(
     CategoryScale,
@@ -24,6 +25,7 @@ ChartJS.register(
 );
 
 function AllStats() {
+    const navigate = useNavigate();
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -36,7 +38,6 @@ function AllStats() {
             },
         ],
     });
-    const session = getSurveySessionToken();
     const {uuid} = useParams();
     const [funFacts, setFunFacts] = useState({highestRated: "", lowestDuration: ""});
     const [chartData1, setChartData1] = useState({
@@ -53,7 +54,7 @@ function AllStats() {
     });
 
     useEffect(() => {
-        request("GET", `/stats`)
+        request("GET", `/stats?uuid=${uuid}`)
             .then((response) => {
                 const fonts = response.data.map((item) => item.font);
                 const ratings = response.data.map((item) => item.rating);
@@ -76,7 +77,7 @@ function AllStats() {
     }, []);
 
     useEffect(() => {
-        request("GET", `/fun-facts?session=${session}&uuid=${uuid}`)
+        request("GET", `/fun-facts?uuid=${uuid}`)
             .then((response) => {
                 setFunFacts(response.data);
             }).catch((error) => {
@@ -85,7 +86,7 @@ function AllStats() {
     }, []);
 
     useEffect(() => {
-        request("GET", `/stats/duration`)
+        request("GET", `/stats/duration?uuid=${uuid}`)
             .then((response) => {
                 const fonts = response.data.map((item) => item.font);
                 const ratings = response.data.map((item) => item.rating);
@@ -181,20 +182,53 @@ function AllStats() {
                 <Card>
                     <Card.Title className="mt-3">Zanimljivosti</Card.Title>
                     <Card.Body>
-                        <div>{funFacts.highestRated.length > 1 ? "Fontovi" : "Font"} koji imaju najbolju
-                            čitljivost: {funFacts.highestRated.length > 1 ? funFacts.highestRated.join(', ') : funFacts.highestRated}</div>
-                        <hr/>
-                        <div>Najbrže
-                            pročitani {funFacts.lowestDuration.length > 1 ? "fontovi" : "font"}: {funFacts.lowestDuration.length > 1 ? funFacts.lowestDuration.join(', ') : funFacts.lowestDuration}</div>
-                        <hr/>
-                        <div>Kategorija fonta koja ima najbolju čitljivost:</div>
-                        <hr/>
-                        <div>Tekstove iz ove kategorije su najbrže pročitani:</div>
-                        <hr/>
-
+                        <div>
+                            {funFacts.highestRated?.length > 1
+                                ? "Fontovi"
+                                : "Font"} koji ima/ju najbolju čitljivost: {funFacts.highestRated?.length > 1
+                                ? funFacts.highestRated.join(', ')
+                                : funFacts.highestRated}
+                        </div>
+                        <hr />
+                        <div>
+                            Najbrže pročitani {funFacts.lowestDuration?.length > 1
+                            ? "fontovi"
+                            : "font"}: {funFacts.lowestDuration?.length > 1
+                                ? funFacts.lowestDuration.join(', ')
+                                : funFacts.lowestDuration}
+                        </div>
+                        <hr />
+                        <div>
+                            {funFacts.lowestRated?.length > 1
+                                ? "Fontovi"
+                                : "Font"} koji ima/ju najgoru čitljivost: {funFacts.lowestRated?.length > 1
+                                ? funFacts.lowestRated.join(', ')
+                                : funFacts.lowestRated}
+                        </div>
+                        <hr />
+                        <div>
+                            Najsporije pročitani {funFacts.highestDuration?.length > 1
+                            ? "fontovi"
+                            : "font"}: {funFacts.highestDuration?.length > 1
+                                ? funFacts.highestDuration.join(', ')
+                                : funFacts.highestDuration}
+                        </div>
+                        <hr />
                     </Card.Body>
                 </Card>
             </Row>
+
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <BsArrowLeftCircle
+                        onClick={() => navigate(`/${uuid}/graphs`)}
+                        style={{fontSize: '2rem', cursor: 'pointer'}}
+                        title="Vrati se na početni zaslon"
+                        className="me-2"
+                    />
+                    <>Vrati se na Vaš rezultat</>
+                </div>
+            </div>
         </Container>
     );
 }

@@ -4,6 +4,7 @@ import Card from 'react-bootstrap/Card';
 import surveyImage from "../../survey.svg";
 import collectionImage from "../../collection.svg";
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 export default function AllAdminSurveys() {
     const [surveys, setSurveys] = useState(null);
@@ -96,32 +97,31 @@ export default function AllAdminSurveys() {
     return (
         <div className="d-flex flex-column align-items-center mt-3">
             {surveys && surveys.length > 0 ? (
-                <ul className="w-75">
+                <ul className="w-100 me-3">
                     <h5 className="mb-3">Ankete</h5>
                     {surveys.map((survey, index) => (
                         <Card className="mb-3" key={index}>
-                            <li className="list-unstyled m-3 d-flex justify-content-between align-items-center">
-                                <div className="d-flex align-items-center">
-                                    <img src={surveyImage} alt="survey" className="me-3"/>
-                                    <span>{survey.title} - {survey.uuid}</span>
-                                </div>
-                                <div>
-                                    <Button
-                                        variant="danger"
-                                        size="sm"
-                                        className="me-2"
-                                        onClick={() => handleDeleteSurvey(survey.id)}
-                                    >
-                                        Obriši
-                                    </Button>
-                                    <Button variant="success" title={`${newUrl}/${survey.uuid}`} size="sm"
-                                            onClick={() => {
-                                                alert("Link copied successfully!");
-                                                navigator.clipboard.writeText(`${newUrl}/${survey.uuid}`);
-                                            }}
-                                    >
-                                        Copy Link
-                                    </Button>
+                            <li className="list-unstyled m-3">
+                                <div className="d-flex justify-content-between align-items-center flex-wrap">
+                                    <div className="d-flex align-items-center">
+                                        <img src={surveyImage} alt="survey" className="me-3" />
+                                        <span>{survey.title} - {survey.uuid}</span>
+                                    </div>
+                                    <div className="d-flex flex-column flex-sm-row align-items-sm-center mt-3 mt-sm-0">
+                                        <Button
+                                            variant="danger"
+                                            size="sm"
+                                            className="me-2"
+                                            onClick={() => handleDeleteSurvey(survey.id)}
+                                        >
+                                            Obriši
+                                        </Button>
+                                        <Form.Control
+                                            type="text"
+                                            value={`${newUrl}/${survey.uuid}`}
+                                            disabled
+                                        />
+                                    </div>
                                 </div>
                             </li>
                         </Card>
@@ -131,16 +131,16 @@ export default function AllAdminSurveys() {
                 <div className="mb-3">Nemate Kreiranih Aneketa.</div>
             )}
             {textCollections && textCollections.length > 0 ? (
-                <ul className="w-75">
+                <ul className="w-100 me-3">
                     <h5 className="mb-3">Kolekcije</h5>
                     {textCollections.map((collection, index) => (
                         <Card className="mb-3" key={index}>
-                            <li className="list-unstyled m-3 d-flex flex-column align-items-start">
+                            <li className="list-unstyled m-3 d-flex align-items-center justify-content-between">
                                 <div className="d-flex align-items-center">
-                                    <img src={collectionImage} alt="collection" className="me-3"/>
+                                    <img src={collectionImage} alt="collection" className="me-3" />
                                     <span>{collection.name}</span>
                                 </div>
-                                <div className="mt-2">
+                                <div className="d-flex">
                                     <Button
                                         variant="danger"
                                         size="sm"
@@ -154,25 +154,24 @@ export default function AllAdminSurveys() {
                                         size="sm"
                                         onClick={() => handleLookCollection(collection.id)}
                                     >
-                                        {visibleCollections[collection.id] ? "Zatvori kolekciju" : "Prikaži kolekciju"}
+                                        {visibleCollections[collection.id] ? "Zatvori tekstove" : "Prikaži tekstove"}
                                     </Button>
                                 </div>
-                                {visibleCollections[collection.id] && selectedCollectionTexts[collection.id] && (
-                                    <div className="mt-3 w-100">
-                                        <h6>Collection Texts:</h6>
-                                        {selectedCollectionTexts[collection.id].map((text, idx) => (
-                                            <textarea
-                                                key={idx}
-                                                value={text}
-                                                readOnly
-                                                className="form-control mb-2"
-                                                rows="3"
-                                            />
-                                        ))}
-                                    </div>
-                                )}
-                                {loadingTexts && <div>Loading texts...</div>}
                             </li>
+                            {visibleCollections[collection.id] && selectedCollectionTexts[collection.id] && (
+                                <div className="w-100">
+                                    {selectedCollectionTexts[collection.id].map((text, idx) => (
+                                        <textarea
+                                            key={idx}
+                                            value={text}
+                                            readOnly
+                                            className="form-control mb-2"
+                                            rows="3"
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                            {loadingTexts && <div>Loading texts...</div>}
                         </Card>
                     ))}
                 </ul>

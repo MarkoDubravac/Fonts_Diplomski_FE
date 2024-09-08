@@ -13,7 +13,6 @@ const ParticipantLoginTest = ({ surveyId }) => {
     const [error, setError] = useState(null);
     const { uuid } = useParams();
 
-    // Fetch the survey data
     useEffect(() => {
         const fetchSurvey = async () => {
             try {

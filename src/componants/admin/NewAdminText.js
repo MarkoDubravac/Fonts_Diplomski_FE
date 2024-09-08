@@ -1,26 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { request } from "../../axios_helper";
-import { Accordion, Form } from 'react-bootstrap';
+import React, {useEffect, useState} from 'react';
+import {request} from "../../axios_helper";
+import {Accordion, Form} from 'react-bootstrap';
 
 const fonts = {
     SANS_SERIF: [
-        "Arial", "Helvetica", "Verdana", "Trebuchet MS", "Gill Sans", "Noto Sans", "Optima", "Arial Narrow"
+        "Arial", "Helvetica", "Verdana", "Roboto", "Tahoma"
     ],
     SERIF: [
-        "Times", "Didot", "Georgia", "Palatino", "Bookman", "New Century Schoolbook", "American Typewriter"
+        "Times New Roman", "Georgia", "Palatino", "Playfair Display", "Merriweather"
     ],
     MONOSPACE: [
-        "Andale Mono", "Courier New", "Courier", "FreeMono", "OCR A Std", "DejaVu Sans Mono"
+        "Courier New", "Lucida Console", "Consolas", "Space Mono", "Roboto Mono"
     ],
     CURSIVE: [
-        "Comic Sans MS", "Apple Chancery", "Bradley Hand", "Brush Script MT", "Snell Roundhand", "URW Chancery L"
+        "Comic Sans MS", "Brush Script MT", "Segoe Script", "Cedarville Cursive"
     ],
     FANTASY: [
-        "Impact", "Luminari", "Chalkduster", "Jazz LET", "Blippo", "Stencil Std", "Marker Felt", "Trattatello"
+        "Impact", "Metal Mania", "Mountains of Christmas", "Freckle Face", "Creepster"
     ]
 };
 
-const FontCheckboxes = ({ fontCategory, selectedFonts, setSelectedFonts }) => {
+const fontCategoryDefaults = {
+    SANS_SERIF: "Arial",
+    SERIF: "Times",
+    MONOSPACE: "Courier",
+    CURSIVE: "Comic Sans MS",
+    FANTASY: "Impact"
+};
+
+const FontCheckboxes = ({fontCategory, selectedFonts, setSelectedFonts}) => {
     const handleFontChange = (event) => {
         const font = event.target.name;
         const family = fontCategory;
@@ -28,7 +36,7 @@ const FontCheckboxes = ({ fontCategory, selectedFonts, setSelectedFonts }) => {
         if (event.target.checked) {
             setSelectedFonts((prevSelectedFonts) => [
                 ...prevSelectedFonts,
-                { name: font, family }
+                {name: font, family}
             ]);
         } else {
             setSelectedFonts((prevSelectedFonts) =>
@@ -43,7 +51,7 @@ const FontCheckboxes = ({ fontCategory, selectedFonts, setSelectedFonts }) => {
                 <Form.Check
                     type="checkbox"
                     id={`${fontCategory}-${font.toLowerCase().replace(/\s+/g, '')}`}
-                    label={font}
+                    label={<span style={{fontFamily: font}}>{font}</span>}
                     name={font}
                     key={index}
                     checked={selectedFonts.some(f => f.name === font && f.family === fontCategory)}
@@ -55,24 +63,26 @@ const FontCheckboxes = ({ fontCategory, selectedFonts, setSelectedFonts }) => {
 };
 
 export default function NewAdminText() {
-    const [collectionTitle, setCollectionTitle] = useState({ value: "", error: false });
-    const [newText, setNewText] = useState({ value: "", error: false });
+    const [collectionTitle, setCollectionTitle] = useState({value: "", error: false});
+    const [newText, setNewText] = useState({value: "", error: false});
     const [textCollections, setTextCollections] = useState([]);
     const [selectedCollection, setSelectedCollection] = useState("");
     const [selectedFonts, setSelectedFonts] = useState([]);
     const [fontError, setFontError] = useState(false);
+    const [fontCount, setFontCount] = useState(0);
+    const [textCount, setTextCount] = useState(0);
 
     const handleTitleChange = (event) => {
-        setCollectionTitle({ value: event.target.value, error: false });
+        setCollectionTitle({value: event.target.value, error: false});
     };
 
     const handleNewTextChange = (event) => {
-        setNewText({ value: event.target.value, error: false });
+        setNewText({value: event.target.value, error: false});
     };
 
     const handleCreateCollection = () => {
         if (!collectionTitle.value.trim()) {
-            setCollectionTitle({ ...collectionTitle, error: true });
+            setCollectionTitle({...collectionTitle, error: true});
             return;
         }
 
@@ -91,7 +101,7 @@ export default function NewAdminText() {
         request("POST", "/admin/saveTextCollection", newCollection)
             .then(() => {
                 alert(`Collection created: ${collectionTitle.value}`);
-                setCollectionTitle({ value: "", error: false });
+                setCollectionTitle({value: "", error: false});
                 setSelectedFonts([]);
             })
             .catch((error) => {
@@ -102,7 +112,7 @@ export default function NewAdminText() {
     useEffect(() => {
         request("GET", "/admin/getTextCollections")
             .then((response) => {
-                const textCollectionsData = response.data.map((item) => item.name);
+                const textCollectionsData = response.data.map((item) => item);
                 setTextCollections(textCollectionsData);
             })
             .catch((error) => {
@@ -111,12 +121,21 @@ export default function NewAdminText() {
     }, [collectionTitle]);
 
     const handleSelectChange = (e) => {
-        setSelectedCollection(e.target.value);
+        const selected = e.target.value;
+        setSelectedCollection(selected);
+        const collection = textCollections.find(c => c.name === selected);
+        if (collection) {
+            setFontCount(collection.fonts.length);
+            setTextCount(collection.surveyTexts.length);
+        } else {
+            setFontCount(0);
+            setTextCount(0);
+        }
     };
 
     const handleAddToCollection = () => {
         if (!newText.value.trim()) {
-            setNewText({ ...newText, error: true });
+            setNewText({...newText, error: true});
             return;
         }
 
@@ -133,7 +152,7 @@ export default function NewAdminText() {
         request("POST", "/admin/createSurveyText", surveyTextDto)
             .then(() => {
                 alert(`Text added to collection: ${selectedCollection}`);
-                setNewText({ value: "", error: false });
+                setNewText({value: "", error: false});
             })
             .catch((error) => {
                 console.error("Error adding text to collection:", error);
@@ -142,7 +161,8 @@ export default function NewAdminText() {
 
     return (
         <div className="container mt-4">
-            <h5 className="mb-3">Napravi kolekciju</h5>
+            <h5 className="mb-2">Nova kolekcija</h5>
+            <p>Kolekcija je skup fontova i tekstova koji se ocjenjuju.</p>
             <div className="mb-3">
                 <input
                     type="text"
@@ -158,7 +178,9 @@ export default function NewAdminText() {
                 <Accordion className="mt-3">
                     {Object.keys(fonts).map((category, index) => (
                         <Accordion.Item eventKey={index.toString()} key={category}>
-                            <Accordion.Header>{category.replace(/_/g, ' ')}</Accordion.Header>
+                            <Accordion.Header style={{fontFamily: fontCategoryDefaults[category]}}>
+                                {category.replace(/_/g, ' ')}
+                            </Accordion.Header>
                             <Accordion.Body>
                                 <FontCheckboxes
                                     fontCategory={category}
@@ -176,12 +198,13 @@ export default function NewAdminText() {
 
                 <button
                     onClick={handleCreateCollection}
-                    className="btn btn-success btn-sm mt-3"
+                    className="btn btn-success mt-3"
                 >
                     Napravi kolekciju
                 </button>
             </div>
-            <h5 className="mb-3">Dodaj tekst u kolekciju</h5>
+            <h5 className="mb-2">Dodaj tekst u kolekciju</h5>
+            <p>Tekst je tekst pomoću kojeg se provodi istraživanje.</p>
             <div className="mb-3">
                 <textarea
                     value={newText.value}
@@ -200,15 +223,21 @@ export default function NewAdminText() {
                     >
                         <option value="" disabled>Odaberi kolekciju</option>
                         {textCollections.map((collection, index) => (
-                            <option key={index} value={collection}>
-                                {collection}
+                            <option key={index} value={collection.name}>
+                                {collection.name}
                             </option>
                         ))}
                     </select>
+                    {selectedCollection && (
+                        <div className="mt-2">
+                            Kolekcija
+                            ima {fontCount} font{fontCount !== 1 ? 'ova' : 'a'} i {textCount} tekst{textCount !== 1 ? 'ova' : ''}.
+                        </div>
+                    )}
                 </div>
                 <button
                     onClick={handleAddToCollection}
-                    className="btn btn-success btn-sm mt-3"
+                    className="btn btn-success mt-3"
                 >
                     Dodaj u kolekciju
                 </button>

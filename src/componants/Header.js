@@ -26,7 +26,7 @@ export default function Header(props) {
   }, []);
   return (
     <header className="App-header">
-      <h1 className="App-title" style={{ fontFamily: currentFont }}>
+      <h1 className="App-title text-truncate" style={{ fontFamily: currentFont }}>
         {props.pageTitle}
       </h1>
     </header>

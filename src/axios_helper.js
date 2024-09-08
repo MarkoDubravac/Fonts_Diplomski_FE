@@ -43,27 +43,25 @@ axios.interceptors.response.use(
       if (error.response) {
         console.error('Full Error Response:', error.response);
 
-        const status = error.response.status;
+            const status = error.response.status;
 
-        if (status === 401) {
-          console.error("Token expired or unauthorized. Redirecting to home page.");
+            if (status === 401) {
+                console.error("Token expired or unauthorized. Redirecting to home page.");
 
-          // Remove tokens from local storage.
-          window.localStorage.removeItem("auth_token");
-          window.localStorage.removeItem("token");
+                window.localStorage.removeItem("auth_token");
+                window.localStorage.removeItem("token");
 
-          // Redirect to home page.
-          window.location.href = "/admin";
+                // Redirect to home page.
+                window.location.href = "/admin";
 
-        } else if (status === 500) {
-          // Handle 500 error specifically
-          console.error("Internal server error. Please try again later.");
+            } else if (status === 500) {
+                console.error("Internal server error. Please try again later.");
+            }
+        } else {
+            console.error("Request failed:", error.message);
         }
-      } else {
-        console.error("Request failed:", error.message);
-      }
 
-      return Promise.reject(error);
+        return Promise.reject(error);
     }
 );
 
@@ -78,7 +76,7 @@ export const setSurveySessionToken = (token) => {
 };
 
 export const startSurveySession = () => {
-  const sessionToken = uuidv4();
-  setSurveySessionToken(sessionToken);
-  return sessionToken;
+    const sessionToken = uuidv4();
+    setSurveySessionToken(sessionToken);
+    return sessionToken;
 };

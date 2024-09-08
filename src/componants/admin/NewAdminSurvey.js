@@ -150,7 +150,8 @@ export default function NewAdminSurvey() {
 
     return (
         <div className="container mt-4">
-            <h5 className="mb-3">Napravi anketu</h5>
+            <h5 className="mb-2">Nova anketa</h5>
+            <p>Anketa je skup pitanja na koja ispitanici odgovaraju prije rješavanja (ocjenjivanja fontova).</p>
             <div className="mb-3">
                 <input
                     type="text"

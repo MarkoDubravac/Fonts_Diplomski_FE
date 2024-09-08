@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {getSurveySessionToken, request} from "../axios_helper";
 import {Bar} from "react-chartjs-2";
-import {Card, Button} from "react-bootstrap";
+import {Card} from "react-bootstrap";
+import { BsArrowLeftCircle, BsArrowRightCircle } from 'react-icons/bs';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -56,6 +57,7 @@ function ParticipantsStats() {
     useEffect(() => {
         request("GET", `/stats?session=${session}`)
             .then((response) => {
+                console.log(response.data);
                 const fonts = response.data.map((item) => item.font);
                 const ratings = response.data.map((item) => item.rating);
                 setChartData({
@@ -77,7 +79,7 @@ function ParticipantsStats() {
     }, []);
 
     useEffect(() => {
-        request("GET", `/fun-facts?session=${session}&uuid=${uuid}`)
+        request("GET", `/fun-facts?session=${session}`)
             .then((response) => {
                 setFunFacts(response.data);
             }).catch((error) => {
@@ -124,7 +126,7 @@ function ParticipantsStats() {
     return (
         <Container>
             <Row className="mb-3 mt-3 justify-content-center">
-                <h2>Tvoji Rezultati</h2>
+                <h2>Vaš Rezultat</h2>
             </Row>
             <Row className="mb-3 justify-content-center">
                 <Col xs={12} sm={12} md={12} lg={6} className="mb-3">
@@ -198,7 +200,26 @@ function ParticipantsStats() {
                     </Card.Body>
                 </Card>
             </Row>
-            <Button onClick={() => navigate(`/${uuid}/graphs/all`)} className={"mb-3 w-100"}>Svi rezultati</Button>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                <BsArrowLeftCircle
+                    onClick={() => navigate(`/${uuid}/home`)}
+                    style={{fontSize: '2rem', cursor: 'pointer'}}
+                    title="Vrati se na početni zaslon"
+                    className="me-2"
+                />
+                <>Vrati se na početni zaslon</>
+                </div>
+                <div>
+                <>Svi rezultati</>
+                <BsArrowRightCircle
+                    onClick={() => navigate(`/${uuid}/graphs/all`)}
+                    style={{fontSize: '2rem', cursor: 'pointer'}}
+                    title="Svi rezultati"
+                    className="ms-2"
+                />
+                </div>
+            </div>
         </Container>
     );
 }

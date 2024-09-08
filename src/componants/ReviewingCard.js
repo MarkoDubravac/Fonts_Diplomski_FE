@@ -53,7 +53,7 @@ function ReviewingCard() {
             });
 
         if (page > 1) {
-            setIsRunning(true); // Start the timer automatically after the first page
+            setIsRunning(true);
         }
     }, [page]);
 
@@ -89,6 +89,7 @@ function ReviewingCard() {
             font: currentFont,
             rating,
             surveySession: getSurveySessionToken(),
+            participantSurveyUuid: uuid
         })
             .then(() => {
                 setPage((prevPage) => prevPage + 1);
@@ -103,7 +104,11 @@ function ReviewingCard() {
     };
 
     return (
-        <div className="row mb-3">
+        <div>
+            <ProgressBar min={1} max={count + 1} now={page} style={{borderRadius: '0'}} striped variant="success"/>
+            <div className="text-center mb-3">
+                {page}/{count}
+            </div>
             <div className="container d-grid" style={{placeItems: "center"}}>
                 {page === 1 && !isRunning && timer === 0 && (
                     <Card className={"mb-3 mt-3 m-5"}>
@@ -111,19 +116,19 @@ function ReviewingCard() {
                             <Card.Img variant="top" className={"w-50"} src={info_fill}/>
                         </div>
                         <Card.Text className={"m-2"}>Molim vas pažljivo pročitajte nadolazeće tekstove.</Card.Text>
-                        <Card.Text className={"m-2"}>Uključen je brojač za vrijeme čitanja.</Card.Text>
+                        <Card.Text className={"m-2"}>Brojač je uključen za vrijeme čitanja.</Card.Text>
                         <Card.Text className={"m-2"}>Nakon što završite s čitanje pritisnite gumb zaustavi.</Card.Text>
-                        <Button onClick={handleStart}>
+                        <Button onClick={handleStart} style={{borderRadius: '0'}}>
                             Kreni
                         </Button>
                     </Card>
                 )}
                 {(isRunning || page > 1 || (page === 1 && timer !== 0)) && (
-                <Card className={"col-sm-6 mb-3 mt-3 text-justify"}>
-                    <Card.Body>
-                        <div style={{fontFamily: currentFont}}>{currentPageText}</div>
-                    </Card.Body>
-                </Card>
+                    <Card className={"col-sm-6 mb-3 mt-3 text-justify"}>
+                        <Card.Body>
+                            <div style={{fontFamily: currentFont}}>{currentPageText}</div>
+                        </Card.Body>
+                    </Card>
                 )}
                 {showNewText ? (
                     <div>
@@ -146,12 +151,6 @@ function ReviewingCard() {
                 ) : (
                     <div></div>
                 )}
-                <div className="mt-4 d-block col-12 col-sm-6">
-                    <div className="text-justify">
-                        {page}/{count}
-                    </div>
-                    <ProgressBar min={1} max={count + 1} now={page} animated/>
-                </div>
             </div>
         </div>
     );

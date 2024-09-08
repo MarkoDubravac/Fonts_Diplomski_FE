@@ -3,7 +3,7 @@ import { Nav } from 'react-bootstrap';
 
 export default function AdminNavLinks({ onSelect }) {
     return (
-        <Nav fill variant="tabs" defaultActiveKey="/" onSelect={onSelect}>
+        <Nav fill variant="tabs" defaultActiveKey="surveys" onSelect={onSelect}>
             <Nav.Item>
                 <Nav.Link eventKey="surveys">
                     Ankete i Kolekcije
